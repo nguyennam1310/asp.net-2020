@@ -1,0 +1,236 @@
+﻿@{
+    ViewBag.Title = ViewBag.Feature + " " + ViewBag.Element;
+
+}
+
+
+@model List<TAMS.Entity.VatTuYTe>
+
+@section CSS{
+    <!--DataTables [ OPTIONAL ]-->
+    <link href="/Areas/Admin/Content/plugins/datatables/media/css/dataTables.bootstrap.css" rel="stylesheet">
+    <link href="/Areas/Admin/Content/plugins/datatables/extensions/Responsive/css/responsive.dataTables.min.css" rel="stylesheet">
+}
+
+<!--List-->
+<div class="panel">
+    <div class="panel-body">
+
+        <div class="pad-btm form-inline">
+            <div class="row">
+                <div class="col-sm-3 table-toolbar-left">
+                    <a class="btn btn-success" href="/Admin/VatTuYTe/Create">
+                        <i class="demo-pli-add"></i> Thêm
+                    </a>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="control-label">Danh mục</label>
+                        @Html.DropDownList("MaLoaiVatTu", (SelectList)ViewBag.Categories, "- Chọn danh mục -",
+                        new { @class = "form-control", @required = "required" })
+                    </div>
+                </div>
+
+                <div class="col-sm-3 table-toolbar-left"></div>
+            </div>
+        </div>
+        @if (ViewBag.CategoryId == 1)
+        {
+            <div class="table-responsive">
+                <table class="table table-striped" id="tblData">
+
+                    <thead>
+                        <tr>
+                            <th class="text-center">STT</th>
+                            <th class="text-center">Tên</th>
+                            <th class="text-center">Số lượng</th>
+                            <th class="text-center">Giá</th>
+                            <th class="text-center">Hạn sử dụng</th>
+                            <th class="text-center">Hãng Sản Xuất</th>
+                           
+                            <th class="text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+
+
+                        @foreach (var VatTuYTe in Model.Select((value, i) => new { i, value }))
+                        {
+                            <tr id="row_@VatTuYTe.value.Id">
+                                <td class="text-center">@(VatTuYTe.i + 1)</td>
+                                <td class="text-center">@VatTuYTe.value.Ten</td>
+                                <td class="text-center">@VatTuYTe.value.SoLuong @VatTuYTe.value.DonVi</td>
+                                <td class="text-center">@VatTuYTe.value.GiaBan</td>
+                                <td class="text-center">@VatTuYTe.value.NamSX.ToString("g")</td>
+                                <td class="text-center">@VatTuYTe.value.HangSX</td>
+                            
+                                <td class="text-center">
+                                    <button class="btn btn-info btn-icon" onclick="openEditing('@VatTuYTe.value.Id')"><i class="demo-psi-pen-5 icon-lg"></i></button>
+                                    <button class="btn btn-danger btn-icon" onclick="deleteElement('@VatTuYTe.value.Id','@VatTuYTe.value.Ten')">
+                                        <i class="demo-psi-recycling icon-lg"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+            </div>
+        }
+        @if (ViewBag.CategoryId == 2)
+        {
+            <div class="table-responsive">
+                <table class="table table-striped" id="tblData">
+
+                    <thead>
+                        <tr>
+                            <th class="text-center">STT</th>
+                            <th class="text-center">Tên</th>
+                            <th class="text-center">Loại dụng cụ</th>
+                            <th class="text-center">Số lượng</th>
+                            <th class="text-center">Giá</th>
+                            <th class="text-center">Hạn sử dụng</th>
+                            <th class="text-center">Hãng Sản Xuất</th>
+
+                            <th class="text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+
+
+                        @foreach (var VatTuYTe in Model.Select((value, i) => new { i, value }))
+                        {
+                        <tr id="row_@VatTuYTe.value.Id">
+                            <td class="text-center">@(VatTuYTe.i + 1)</td>
+                            <td class="text-center">@VatTuYTe.value.Ten</td>
+                            <td class="text-center">@VatTuYTe.value.LoaiDungCu</td>
+                            <td class="text-center">@VatTuYTe.value.SoLuong @VatTuYTe.value.DonVi</td>
+                            <td class="text-center">@VatTuYTe.value.GiaBan</td>
+                            <td class="text-center">@VatTuYTe.value.NamSX.ToString("g")</td>
+                            <td class="text-center">@VatTuYTe.value.HangSX</td>
+
+                            <td class="text-center">
+                                <button class="btn btn-info btn-icon" onclick="openEditing('@VatTuYTe.value.Id')"><i class="demo-psi-pen-5 icon-lg"></i></button>
+                                <button class="btn btn-danger btn-icon" onclick="deleteElement('@VatTuYTe.value.Id','@VatTuYTe.value.Ten')">
+                                    <i class="demo-psi-recycling icon-lg"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+            </div>
+        }
+        @if (ViewBag.CategoryId == 3)
+        {
+            <div class="table-responsive">
+                <table class="table table-striped" id="tblData">
+
+                    <thead>
+                        <tr>
+                            <th class="text-center">STT</th>
+                            <th class="text-center">Tên</th>
+                            <th class="text-center">Loại hóa chất</th>
+                            <th class="text-center">Số lượng</th>
+                            <th class="text-center">Giá</th>
+                            <th class="text-center">Hạn sử dụng</th>
+                            <th class="text-center">Hãng Sản Xuất</th>
+                            <th class="text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+
+
+                        @foreach (var VatTuYTe in Model.Select((value, i) => new { i, value }))
+                        {
+                        <tr id="row_@VatTuYTe.value.Id">
+                            <td class="text-center">@(VatTuYTe.i + 1)</td>
+                            <td class="text-center">@VatTuYTe.value.Ten @VatTuYTe.value.HamLuong</td>
+                            <td class="text-center">@VatTuYTe.value.LoaiHoaChat</td>
+                            <td class="text-center">@VatTuYTe.value.SoLuong @VatTuYTe.value.DonVi</td>
+                            <td class="text-center">@VatTuYTe.value.GiaBan</td>
+                            <td class="text-center">@VatTuYTe.value.NamSX.ToString("g")</td>
+                            <td class="text-center">@VatTuYTe.value.HangSX</td>
+
+                            <td class="text-center">
+                                <button class="btn btn-info btn-icon" onclick="openEditing('@VatTuYTe.value.Id')"><i class="demo-psi-pen-5 icon-lg"></i></button>
+                                <button class="btn btn-danger btn-icon" onclick="deleteElement('@VatTuYTe.value.Id','@VatTuYTe.value.Ten')">
+                                    <i class="demo-psi-recycling icon-lg"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <!--DataTables [ OPTIONAL ]-->
+    <script src="/Areas/Admin/Content/plugins/datatables/media/js/jquery.dataTables.js"></script>
+    <script src="/Areas/Admin/Content/plugins/datatables/media/js/dataTables.bootstrap.js"></script>
+    <script src="/Areas/Admin/Content/plugins/datatables/extensions/Responsive/js/dataTables.responsive.min.js"></script>
+
+    <script>
+
+        const baseUrl = "/admin/VatTuYTe";
+
+        $(document).ready(function () {
+
+            $("#MaLoaiVatTu").val('@ViewBag.CategoryId');
+            $("#MaLoaiVatTu").change(function () {
+                const categoryId = $(this).val();
+                notify.loading();
+                window.location.href = baseUrl + "?categoryId=" + categoryId;
+            });
+            $('#tblData').dataTable({
+                "language": {
+                    "paginate": {
+                        "previous": '<i class="demo-psi-arrow-left"></i>',
+                        "next": '<i class="demo-psi-arrow-right"></i>'
+                    }
+                }
+            });
+        });
+
+        //Edit
+        function openEditing(id) {
+            window.location.href = `${baseUrl}/update?id=${id}`;
+        }
+    
+        //Del
+        function deleteElement(_id, name) {
+            var mess = 'Xác nhận <b>xóa</b> bản ghi <b>' + name + '</b>';
+            bootbox.confirm(mess, function (result) {
+                if (result) {
+                    ajax.del(`${baseUrl}/del`,
+                        { id: _id },
+                        (response) => {
+                            if (response.status) {
+                                notify.push(response.mess, notify.EType.SUCCESS);
+                                $(`#row_${_id}`).remove();
+                            } else {
+                                notify.push(mess, notify.EType.DANGER);
+                            }
+                        },
+                        (jqXHR, textStatus) => {
+                            const mess = `Request failed: ${textStatus}`;
+                            notify.push(mess, notify.EType.DANGER);
+
+                        }
+                    );
+                }
+            });
+        }
+    </script>
+}

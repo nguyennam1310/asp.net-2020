@@ -1,0 +1,262 @@
+﻿@model TAMS.Entity.News
+@{
+    ViewBag.Title = ViewBag.Feature + " " + ViewBag.Element;
+
+}
+<div class="row">
+    <div class="col-sm-12">
+        <div class="panel">
+
+
+            <!--Block Styled Form -->
+            <!--===================================================-->
+            <form method="post" id="form">
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                @if (ViewBag.isEdit)
+                {
+                    <input type="hidden" value="true" name="isEdit" />
+                    <input type="hidden" value="@Model.Id" name="Id" />
+                }
+                else
+                {
+                    <input type="hidden" value="false" name="isEdit" />
+                }
+
+                <input type="hidden" value="false" name="isSaveAs" />
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label class="control-label">Tiêu đề</label>
+                                @Html.EditorFor(model => model.Title, new { htmlAttributes = new { @class = "form-control", @maxlength = 250 } })
+                            </div>
+                            <div class="form-group">
+                                <label>Giới thiệu</label>
+                                @Html.EditorFor(model => model.Sapo, new { htmlAttributes = new { @class = "form-control", @maxlength = 250 } })
+
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label">Nội dung</label>
+                                @Html.TextAreaFor(model => model.Description, new { @class = "form-control", @rows = "6", @maxlength = 1000 })
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label">Avatar</label>
+                                @Html.EditorFor(model => model.Avatar, new { htmlAttributes = new { @class = "form-control", @placeholder = "file", type = "file" } })
+                                @if (ViewBag.isEdit)
+                                {
+                                    <img class="img img-thumbnail" id="ImgAvt" style="width: 200px;float: right" src="~/Content/images/@Html.DisplayFor(model => model.Avatar)" alt="" />
+                                }
+                            </div>
+                            <div class="form-group">
+                                @Html.HiddenFor(model => model.CreateDate)
+                            </div>
+                            <div class="form-group">
+                                @Html.HiddenFor(model => model.ModifyDate)
+                            </div>
+                            <div class="form-group">
+                                <label for="Active">Trạng thái</label>
+                                @Html.EditorFor(model => model.Active, new { htmlAttributes = new { @class = "form-control" } })
+                            </div>
+                        </div>
+
+                    </div>
+
+
+
+                </div>
+                <div class="panel-footer text-center">
+                    <button class="btn btn-success">Lưu</button>
+
+                    <a class="btn btn-danger" href="/Admin/News">Hủy</a>
+                </div>
+            </form>
+            <!--===================================================-->
+            <!--End Block Styled Form -->
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDMyiVgN9rodizCjq6WoTVQPwEYIZj_mgc"></script>
+    <script src="~/Areas/Admin/Content/js/address-lookup.js"></script>
+    <script>
+        $("#lookup").addressLookup({
+            "input": "#address-lookup"
+        })
+    </script>
+
+    <script>
+        $("#ImageProfile").change(function () {
+            const imgSrc = $("input[name=ImageProfile]").val();
+            if (imgSrc !== "") {
+                $("#ImgAvt").attr("src", imgSrc);
+            }
+        });
+        function ChooseImgAvatar() {
+            const finder = new CKFinder();
+            finder.selectActionFunction = function (fileUrl) {
+                $("#ImgAvt").attr("src", fileUrl);
+                $("#ImageProfile").val(fileUrl);
+            }
+            finder.popup();
+        }
+
+        
+        const baseUrl = '/Admin/News';
+        // Valid
+        const fields = {
+            Title: {
+                container: 'tooltip',
+                validators: {
+                    notEmpty: {
+                        message: 'không thể để trống'
+                    }
+                }
+            },
+            Sapo: {
+                container: 'tooltip',
+                validators: {
+                    notEmpty: {
+                        message: 'không thể để trống'
+                    }
+                }
+            },
+            Description: {
+                container: 'tooltip',
+                validators: {
+                    notEmpty: {
+                        message: 'không thể để trống'
+                    }
+                }
+            }
+
+        }
+        validator.valid('form', fields, (e) => {
+            e.preventDefault();
+
+            if ($("input[name=isEdit]").val() == "true") {
+                if ($('#Avatar').val() != "") {
+                    var formData = new FormData();
+                    formData.append("Id", $('input[name=Id]').val());
+                    formData.append("Title", $('#Title').val());
+                    formData.append("Sapo", $('#Sapo').val());
+                    formData.append("Description", $('#Description').val());
+                    formData.append("CreateDate", new Date().toISOString());
+                    formData.append("ModifyDate", new Date().toISOString());
+                    formData.append("Active", $('#Active').val());
+                    formData.append(" Avatar", $('#Avatar')[0].files[0]['name']);
+                    formData.append("file", $('#Avatar')[0].files[0]);
+                    ajax.createOrUpdate(`${baseUrl}/Update`, formData,
+                        (response) => {
+                            if (response.status) {
+                                notify.push(response.mess, notify.EType.SUCCESS);
+                                notify.loading();
+                                window.location.href = baseUrl + '/Index';
+
+
+
+                            } else {
+                                notify.push(response.mess, notify.EType.DANGER);
+                                $(':input[type="submit"]').prop('disabled', false);
+                            }
+                        },
+                        (jqXhr, textStatus) => {
+                            const mess = `Request failed: ${textStatus}`;
+                            notify.push(mess, notify.EType.DANGER);
+                            $(':input[type="submit"]').prop('disabled', false);
+                        }
+                    );
+                }
+                else {
+                    var formData = new FormData();
+                    formData.append("Id", $('input[name=Id]').val());
+                    formData.append("Title", $('#Title').val());
+                    formData.append("Sapo", $('#Sapo').val());
+                    formData.append("Description", $('#Description').val());
+                    formData.append("CreateDate", new Date().toISOString());
+                    formData.append("ModifyDate", new Date().toISOString());
+                    formData.append("Active", $('#Active').val());
+                    ajax.createOrUpdate(`${baseUrl}/Update1`, formData,
+                        (response) => {
+                            if (response.status) {
+                                notify.push(response.mess, notify.EType.SUCCESS);
+                                notify.loading();
+                                window.location.href = baseUrl + '/Index';
+                            } else {
+                                notify.push(response.mess, notify.EType.DANGER);
+                                $(':input[type="submit"]').prop('disabled', false);
+                            }
+                        },
+                        (jqXhr, textStatus) => {
+                            const mess = `Request failed: ${textStatus}`;
+                            notify.push(mess, notify.EType.DANGER);
+                            $(':input[type="submit"]').prop('disabled', false);
+                        }
+                    );
+                }
+            }
+
+            else {
+                if ($('#Avatar').val() != "") {
+                    var formData = new FormData();
+                    formData.append("Title", $('#Title').val());
+                    formData.append("Sapo", $('#Sapo').val());
+                    formData.append("Description", $('#Description').val());
+                    formData.append("CreateDate", new Date().toISOString());
+                    formData.append("ModifyDate", new Date().toISOString());
+                    formData.append("Active", $('#Active').val());
+                    formData.append(" Avatar", $('#Avatar')[0].files[0]['name']);
+                    formData.append("file", $('#Avatar')[0].files[0]);
+                    ajax.createOrUpdate(`${baseUrl}/CreateNews`, formData,
+                        (response) => {
+                            if (response.status) {
+                                notify.push(response.mess, notify.EType.SUCCESS);
+                                notify.loading();
+                                window.location.href = baseUrl + '/Index';
+
+
+
+                            } else {
+                                notify.push(response.mess, notify.EType.DANGER);
+                                $(':input[type="submit"]').prop('disabled', false);
+                            }
+                        },
+                        (jqXhr, textStatus) => {
+                            const mess = `Request failed: ${textStatus}`;
+                            notify.push(mess, notify.EType.DANGER);
+                            $(':input[type="submit"]').prop('disabled', false);
+                        }
+                    );
+                }
+                else {
+                    var formData = new FormData();
+                    formData.append("Title", $('#Title').val());
+                    formData.append("Sapo", $('#Sapo').val());
+                    formData.append("Description", $('#Description').val());
+                    formData.append("CreateDate", new Date().toISOString());
+                    formData.append("ModifyDate", new Date().toISOString());
+                    formData.append("Active", $('#Active').val());
+                    ajax.createOrUpdate(`${baseUrl}/CreateNews1`, formData,
+                        (response) => {
+                            if (response.status) {
+                                notify.push(response.mess, notify.EType.SUCCESS);
+                                notify.loading();
+                                window.location.href = baseUrl + '/Index';
+                            } else {
+                                notify.push(response.mess, notify.EType.DANGER);
+                                $(':input[type="submit"]').prop('disabled', false);
+                            }
+                        },
+                        (jqXhr, textStatus) => {
+                            const mess = `Request failed: ${textStatus}`;
+                            notify.push(mess, notify.EType.DANGER);
+                            $(':input[type="submit"]').prop('disabled', false);
+                        }
+                    );
+                }
+            }
+        });
+    </script>
+}
+

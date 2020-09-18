@@ -1,0 +1,10 @@
+E:\VNPTSOFTWARE\TuyenDung\ThucTap\TAMS.Entity\bin\Debug\TAMS.Entity.dll
+E:\VNPTSOFTWARE\TuyenDung\ThucTap\TAMS.Entity\bin\Debug\TAMS.Entity.pdb
+E:\VNPTSOFTWARE\TuyenDung\ThucTap\TAMS.Entity\obj\Debug\TAMS.Entity.dll
+E:\VNPTSOFTWARE\TuyenDung\ThucTap\TAMS.Entity\obj\Debug\TAMS.Entity.pdb
+E:\QLBenhVien\QLBenhVien\TAMS.Entity\bin\Debug\TAMS.Entity.dll
+E:\QLBenhVien\QLBenhVien\TAMS.Entity\bin\Debug\TAMS.Entity.pdb
+E:\QLBenhVien\QLBenhVien\TAMS.Entity\obj\Debug\TAMS.Entity.csprojAssemblyReference.cache
+E:\QLBenhVien\QLBenhVien\TAMS.Entity\obj\Debug\TAMS.Entity.csproj.CoreCompileInputs.cache
+E:\QLBenhVien\QLBenhVien\TAMS.Entity\obj\Debug\TAMS.Entity.dll
+E:\QLBenhVien\QLBenhVien\TAMS.Entity\obj\Debug\TAMS.Entity.pdb

@@ -1,0 +1,258 @@
+﻿
+@model List<TAMS.Entity.Attachment>
+@{
+    ViewBag.Title = ViewBag.Feature + " " + ViewBag.Element;
+ 
+}
+
+<!--List-->
+<div class="panel">
+    <div class="panel-body">
+
+        <div class="pad-btm form-inline">
+            <div class="row">
+                <div class="col-sm-6 table-toolbar-left">
+                    <button data-toggle="modal" onclick="openModal(false)" class="btn btn-success"><i class="demo-pli-add"></i> Thêm</button>
+                </div>
+                <div class="col-sm-6 table-toolbar-right">
+                    <div class="form-group">
+                        <input id="demo-input-search2" type="text" placeholder="Tìm kiếm" class="form-control" autocomplete="off">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th class="text-center">STT</th>
+                        <th class="text-center">Tên </th>
+                        <th class="text-center">Loại </th>
+                        <th class="text-center">Tải xuống </th>
+                        <th class="text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Select((value, index) => new { index = (index + 1), value }))
+                    {
+                        <tr id="row_@item.value.Id">
+                            <td class="text-center"><a class="btn-link" href="#">@item.index</a></td>
+                            <td class="text-center">@item.value.Name</td>
+                            <td class="text-center">@item.value.Type</td>
+                            <td class="text-center">
+                                <a class="btn btn-info btn-icon" href="~/Content/images/@item.value.Url" target="_blank" style="font-size: 9px">
+                                    <i class="fa fa-download icon-sm"></i>
+                                </a>
+                            </td>
+                            <td class="text-center">
+                                <button class="btn btn-info btn-icon" onclick="openModal(true,'@item.value.Id')"><i class="demo-psi-pen-5 icon-lg"></i></button>
+                                <button class="btn btn-danger btn-icon" onclick="deleteElement('@item.value.Id','@item.value.Name')"><i class="demo-psi-recycling icon-lg"></i></button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<!--Create-->
+<div class="modal fade" id="data-modal" role="dialog" tabindex="-1" aria-labelledby="create" aria-hidden="true">
+    <div class="modal-dialog" style="padding: 5% 0;">
+        <div class="modal-content">
+            <form id="modal-form" class="form-horizontal" method="post">
+                <input type="hidden" name="Id" />
+                <input type="hidden" name="isEdit" />
+                <input type="hidden" name="AttachmentId" />
+                <input type="hidden" name="DetailRecordId" value="@ViewBag.DetailRecordId" />
+                <!--Modal header-->
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><i class="pci-cross pci-circle"></i></button>
+                    <h4 class="modal-title">@ViewBag.Element</h4>
+                </div>
+
+                <!--Modal body-->
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="col-lg-3 control-label">Tên</label>
+                        <div class="col-lg-7">
+                            <input type="text" class="form-control" name="Name" placeholder="" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-lg-3 control-label">Tệp đính kèm</label>
+                        <div class="col-lg-7 input-group mar-btm">
+
+                            <input type="file" class="form-control" name="Url" id="Url" required>
+
+                                <div id="Img-1"></div>
+                    
+
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-lg-3 control-label">Loại</label>
+                        <div class="col-lg-7 input-group mar-btm">
+                            <input type="text" class="form-control" name="Type" placeholder="Ảnh, Video, Scan kết quả" required>
+                        </div>
+                    </div>
+                </div>
+                <!--Modal footer-->
+                <div class="modal-footer">
+                    <button data-dismiss="modal" class="btn btn-default" type="button">Đóng</button>
+                    <button class="btn btn-success" type="submit">Lưu</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!--Script-->
+@section Scripts {
+    <script>
+
+
+
+        const baseUrl = "/admin/attachment";
+        // Valid
+        const fields = {
+            Name: {
+                container: 'tooltip',
+                validators: {
+                    notEmpty: {
+                        message: 'Tên không được để trống!'
+                    }
+                }
+            }
+            
+        }
+
+        validator.valid('modal-form',
+            fields,
+            (e) => {
+                e.preventDefault();
+                if ($('#Url').val() != "") {
+
+
+                    var formData = new FormData();
+                    formData.append("Id", $('input[name=Id]').val());
+                    formData.append("isEdit", $('input[name=isEdit]').val());
+                    formData.append("AttachmentId", $('input[name=AttachmentId]').val());
+                    formData.append("DetailRecordId", $('input[name=DetailRecordId]').val());
+                    formData.append("Name", $('input[name=Name]').val());
+                    formData.append("Type", $('input[name=Type]').val());
+                    formData.append("Url", $('#Url')[0].files[0]['name']);
+                    formData.append("file", $('#Url')[0].files[0]);
+
+                    ajax.createOrUpdate(`${baseUrl}/CreateOrEdit`,
+                        formData,
+                        (response) => {
+                            if (response.status) {
+                                notify.push(response.mess, notify.EType.SUCCESS);
+                                notify.loading();
+                                $('#data-modal').modal('hide');
+                                window.location.reload();
+                            } else {
+                                notify.push(response.mess, notify.EType.DANGER);
+                                $(':input[type="submit"]').prop("disabled", false);
+                            }
+                        },
+                        (jqXhr, textStatus) => {
+                            const mess = `Request failed: ${textStatus}`;
+                            notify.push(mess, notify.EType.DANGER);
+                            $(':input[type="submit"]').prop("disabled", false);
+                        }
+                    );
+                }
+                else {
+                    var formData = new FormData();
+                    formData.append("Id", $('input[name=Id]').val());
+                    formData.append("isEdit", $('input[name=isEdit]').val());
+                    formData.append("AttachmentId", $('input[name=AttachmentId]').val());
+                    formData.append("DetailRecordId", $('input[name=DetailRecordId]').val());
+                    formData.append("Name", $('input[name=Name]').val());
+                    formData.append("Type", $('input[name=Type]').val());
+
+                    ajax.createOrUpdate(`${baseUrl}/CreateOrEdit1`,
+                        formData,
+                        (response) => {
+                            if (response.status) {
+                                notify.push(response.mess, notify.EType.SUCCESS);
+                                notify.loading();
+                                $('#data-modal').modal('hide');
+                                window.location.reload();
+                            } else {
+                                notify.push(response.mess, notify.EType.DANGER);
+                                $(':input[type="submit"]').prop("disabled", false);
+                            }
+                        },
+                        (jqXhr, textStatus) => {
+                            const mess = `Request failed: ${textStatus}`;
+                            notify.push(mess, notify.EType.DANGER);
+                            $(':input[type="submit"]').prop("disabled", false);
+                        }
+                    );
+                }
+            });
+
+        //Edit
+        function openModal(isEdit, id) {
+            $('#modal-form')[0].reset();
+            if (!isEdit) {
+                $('#modal-form input[name="isEdit"]').val(false);
+                $('#modal-form input[name="Id"]').val("");
+                $('#data-modal').modal('show');
+                return;
+            }
+
+            ajax.get(`${baseUrl}/GetJson`,
+                { id: id },
+                (response) => {
+                    if (response.status) {
+                        const obj = response.data;
+                        $('#modal-form input[name="Name"]').val(obj.Name);
+
+                        $('#modal-form input[name="Type"]').val(obj.Type);
+
+                        $('#modal-form input[name="Id"]').val(obj.Id);
+                        $('#modal-form input[name="isEdit"]').val(true);
+                        $('#data-modal').modal('show');
+                        
+
+                    } else {
+                        notify.push(response.mess, notify.EType.DANGER);
+                    }
+                },
+                (jqXhr, textStatus) => {
+                    const mess = `Request failed: ${textStatus}`;
+                    notify.push(mess, notify.EType.DANGER);
+
+                }
+            );
+        }
+
+        //Del
+        function deleteElement(id, name) {
+            var mess = `Xác nhận <b>xóa</b> bản ghi <b>${name}</b>`;
+            bootbox.confirm(mess,
+                function (result) {
+                    if (result) {
+                        ajax.del(`${baseUrl}/del`,
+                            { id: id },
+                            (response) => {
+                                if (response.status) {
+                                    notify.push(response.mess, notify.EType.SUCCESS);
+                                    $(`#row_${id}`).remove();
+                                } else {
+                                    notify.push(mess, notify.EType.DANGER);
+                                }
+                            },
+                            (jqXhr, textStatus) => {
+                                const mess = `Request failed: ${textStatus}`;
+                                notify.push(mess, notify.EType.DANGER);
+
+                            }
+                        );
+                    }
+                });
+        }
+    </script>
+}

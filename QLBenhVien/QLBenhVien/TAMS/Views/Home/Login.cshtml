@@ -1,0 +1,154 @@
+﻿
+@{
+    ViewBag.Title = "Đăng nhập";
+}
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css">
+<script src="~/Scripts/jquery-3.4.1.js"></script>
+<link href="~/Content/plugin/notifyjs/lobibox.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+<!-- Start main-content -->
+
+<div class="main-content" style="padding-top: 80px;">
+    <!-- Section: inner-header -->
+    <section class="inner-header divider parallax layer-overlay overlay-dark-5" data-bg-img="/Content/images/cinema/cinema-inner1.jpg">
+        <div class="container pt-70 pb-20">
+            <!-- Section Content -->
+            <div class="section-content">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h2 class="title text-white">Đăng nhập - Đăng ký</h2>
+                        <ol class="breadcrumb text-left text-black mt-10">
+                            <li><a href="/">Home</a></li>
+                            <li class="active text-gray-silver">Đăng nhập - đăng ký</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-40">
+                    <h4 class="text-gray mt-0 pt-5">Login</h4>
+                    <form name="login-form" class="clearfix" id="frmLogin" method="post">
+                        <div id="msg"><ul style="color:red;"> Invalid Username Or Password</ul></div>
+                        <div class="row">
+                            <div class="form-group col-md-12">
+                                <label for="form_username_email">Tên đăng nhập</label>
+                                <input id="UserName" name="UserName" class="form-control" value="patient" type="text">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-12">
+                                <label for="form_password">Mật khẩu</label>
+                                <input id="Password" name="Password" class="form-control" type="password" value="123qwe">
+                            </div>
+                        </div>
+                        <div class="form-group pull-right mt-10">
+                            <button class="btn btn-primary btn-sm" id="btnLogin" onclick="Login();">Đăng nhập</button>
+                        </div>
+                        <div class="clear text-center pt-10">
+                            <a class="text-theme-colored font-weight-600 font-12" href="#">Quên mật khẩu</a>
+                        </div>
+                        @*<div class="clear text-center pt-10">
+            <a class="btn btn-dark btn-lg btn-block no-border mt-15 mb-15" href="#" data-bg-color="#3b5998">Login with facebook</a>
+            <a class="btn btn-dark btn-lg btn-block no-border" href="#" data-bg-color="#00acee">Login with twitter</a>
+        </div>*@
+                    </form>
+                </div>
+                <div class="col-md-7 col-md-offset-1">
+                  
+                    <form name="reg-form" class="register-form" method="post" id="frmReg">
+                        <div class="icon-box mb-0 p-0">
+                            <a href="#" class="icon icon-bordered icon-rounded icon-sm pull-left mb-0 mr-10">
+                                <i class="pe-7s-users"></i>
+                            </a>
+                            <h4 class="text-gray pt-10 mt-0 mb-30">Không có tài khoản? Đăng ký ngay. </h4>  <span id="regNotify"></span>
+                        </div>
+                        <div id="message1">
+                            <div class="alert alert-success">
+                                <span class="glyphicon glyphicon-ok"></span><strong>
+                                    Success Message!<br />
+                                    send an email to your email address with confirmation link!<br />
+                                    please check your inbox
+                                </strong>
+                            </div>
+                        </div>
+                        <div id="message2">
+                            <div class="alert alert-danger">
+                                <span class="glyphicon glyphicon-remove"></span><strong>Error Message! Your Registration Is Not Complete</strong>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                <label for="form_name">Tên đầy đủ</label>
+                                <input name="FullName" id="FullName" class="form-control" type="text" required>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="form_gender">Giới tính</label>
+                                <select id="Gender" name="Gioitinh" class="form-control" required>
+                                    <option value="" selected>---- Lựa chọn ----</option>
+                                    <option value="True">Nam</option>
+                                    <option value="False">Nữ</option>
+                                </select>
+                                @* <div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="Nam" value="option1" checked="checked">
+                        <label class="form-check-label" for="inlineRadio1">Nam</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="Nu" value="option2">
+                        <label class="form-check-label" for="inlineRadio2">Nữ</label>
+                    </div>
+                </div>*@
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                <label for="form_choose_username">Tên đăng nhập</label>
+                                <input id="UserName1" name="Username" class="form-control" type="text" required>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="form_chooseDateOfBirth">Ngày sinh</label>
+                                <input id="DateOfBirth" name="DateOfBirth" class="form-control" type="date" required>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                <label>Email</label>
+                                <input name="Email" id="Email" class="form-control" type="email" required>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label>Số điện thoại</label>
+                                <input name="Phone" id="Phone" class="form-control" type="text">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                <label for="form_choose_password">Mật khẩu</label>
+                                <input id="Password1" name="Password" class="form-control" type="password" required>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label>Nhập lại mật khẩu</label>
+                                <input id="RePassword" name="RePassword" class="form-control" type="password" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <button class="btn btn-success btn-lg btn-block mt-15" type="submit" id="btnReg" onclick="Register();">Đăng ký</button>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </section>
+</div>
+<!-- end main-content -->
+
+<script src="~/Scripts/Account.js"></script>
+
+

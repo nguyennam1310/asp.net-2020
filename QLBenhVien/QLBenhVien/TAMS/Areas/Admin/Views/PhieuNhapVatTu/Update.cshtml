@@ -1,0 +1,1013 @@
+﻿@model List<TAMS.Entity.PhieuNhapVatTuChiTiet>
+
+    @{
+        var Phieu = (TAMS.Entity.PhieuNhapVatTu)ViewBag.phieu ?? new TAMS.Entity.PhieuNhapVatTu();
+    }
+    @section CSS{
+        <link href="~/Areas/Admin/Content/plugins/bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css" rel="stylesheet" />
+        <style>
+            .select2-container {
+                z-index: 99999;
+                width: 100% !important;
+            }
+        </style>
+    }
+    <div class="panel">
+        <div class="panel-body">
+            <h3>Phiếu nhập vật tư</h3>
+            <form id="form" class="form-horizontal" action="#" method="post">
+                <input type="hidden" value="true" name="IsEdit" />
+                <input type="hidden" value="@Phieu.Id" name="Id" />
+                <div class="form-group row">
+                    <div class="col-lg-6">
+                        <label class="control-label">Ngày Nhập</label>
+                        <div class="input-group date" id="NgayNhap">
+                            <input type="text" class="form-control" name="NgayNhap" id="NgayNhap" required />
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <label class="control-label">Tên nhà cung cấp</label>
+                        <input type="text" class="form-control" />
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-lg-6">
+                        <label class="control-label">Người nhận</label>
+                        <input type="text" class="form-control" />
+                    </div>
+                    <div class="col-lg-6">
+                        <label class="control-label">Người giao hàng</label>
+                        <input type="text" class="form-control" />
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-lg-6">
+                        <label class="control-label">Số chứng từ </label>
+                        <input type="text" class="form-control" />
+                    </div>
+                    <div class="col-lg-6">
+                        <label class="control-label">Nguồn nhập</label>
+                        <input type="text" class="form-control" />
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-lg-12">
+                        <label class="control-label">Ghi chú</label>
+                        <input type="text" class="form-control" />
+                    </div>
+                </div>
+                @*
+                    <div class="tab-footer" style="padding-top: 15px;">
+                        <div class="row">
+                            <div class="col-lg-2"></div>
+                            <div class="col-lg-8">
+                                @{
+                                if (ViewBag.IsEdit)
+                                {
+                                <button type="submit" class="btn btn-success pull-right">Lưu</button>
+                                }
+                                else
+                                {
+                                <button type="submit" class="btn btn-success pull-right">Thêm</button>
+                                }
+                                }
+                            </div>
+                            <div class="col-lg-2"></div>
+                        </div>
+                    </div>
+                *@
+            </form>
+            <div class="fixed-fluid">
+                <div class="fluid">
+                    <div class="text-right">
+                        <button class="btn btn-sm btn-primary" onclick="openModal(false)">Thêm vật tư</button>
+                        <button class="btn btn-sm btn-primary" onclick="openModal1(false)">Thêm vật tư mới</button>
+                    </div>
+                    <div class="fixed-fluid">
+                        <div class="fluid">
+                            <div class="form-group text-center">
+                                <h3> Phiếu nhập vật tư chi tiết: </h3>
+                            </div>
+                            <div class="panel">
+                                <div class="panel-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th class="text-center">STT</th>
+                                                    <th class="text-center">Tên vật tư </th>
+                                                    <th class="text-center">Số lượng </th>
+                                                    <th class="text-center">Đơn giá </th>
+                                                    <th class="text-center">Thành tiền </th>
+                                                    <th class="text-center">Năm sản xuất </th>
+                                                    <th class="text-center">Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                   @foreach (var item in Model.Select((value, index) => new { index = (index + 1), value }))
+                                                    {
+                                                    <tr id="row_@item.value.Id">
+                                                        <td class="text-center"><a class="btn-link" href="#">@item.index</a></td>
+                                                        <td class="text-center">@item.value.SoLuong</td>
+                                                      
+                                                        <td class="text-center">@item.value.DonGia</td>
+                                                        <td class="text-center">
+                                                            <button class="btn btn-info btn-icon" title="Thuốc" onclick="openRedirect(false,'@item.value.Id')"><i class="fa fa-cubes icon-sm"></i></button>
+                                                            <button class="btn btn-info btn-icon" title="Tệp đính kèm" onclick="openRedirect(true,'@item.value.Id')"><i class="fa fa-files-o icon-sm"></i></button>
+                                                            <button class="btn btn-info btn-icon" title="Sửa" onclick="openModal(true,'@item.value.Id')"><i class="demo-psi-pen-5 icon-sm"></i></button>
+                                                            <button class="btn btn-danger btn-icon" onclick="deleteElement('@item.value.Id','@item.value.Ten')"><i class="demo-psi-recycling icon-sm"></i></button>
+                                                        </td>
+                                                    </tr>
+                                                    }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--Create-->
+    <div class="modal fade" id="data-modal" role="dialog" aria-labelledby="create" aria-hidden="true">
+        <div class="modal-dialog modal-lg" style="padding: 5% 0;">
+            <div class="modal-content">
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                <form id="modal-form" class="form-horizontal" method="post">
+                    <input type="hidden" name="Id" />
+                    <input type="hidden" name="MaPhieuNhap" value="" />
+                    <!--Modal header-->
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><i class="pci-cross pci-circle"></i></button>
+                        <h4 class="modal-title"></h4>
+                    </div>
+                    @if (ViewBag.IsEdit1)
+                    {
+                        <input type="hidden" value="true" name="IsEdit1" />
+                        <input type="hidden" value="@Phieu.Id" name="Id" />
+                    }
+                    else
+                    {
+                        <input type="hidden" value="false" name="IsEdit1" />
+                    }
+                    <!--Modal body-->
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-lg-1"></div>
+                                <div class="col-lg-6">
+                                    <label class="control-label">Tên vật tư*</label>
+                                    @Html.DropDownList("MaVatTu", (SelectList)ViewBag.VatTuYTe, "- Chọn danh mục -",
+                                    new { @class = "form-control", @required = "required" })
+                                
+                                </div>
+                                <div class="col-lg-4">
+                                    <label class="control-label">Danh mục*</label>
+                                    @Html.DropDownList("MaLoaiVatTu", (SelectList)ViewBag.Categories, "- Chọn danh mục -",
+                                    new { @class = "form-control", @required = "required" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-lg-1"></div>
+                                <div class="col-lg-5">
+                                    <label class="control-label">Số lượng*</label>
+                                    <input class="form-control text-box single-line" data-val="true" data-val-number="The field SoLuong must be a number." data-val-required="The SoLuong field is required." id="SoLuong" maxlength="250" name="SoLuong" type="number" value="" />
+                                </div>
+                                <div class="col-lg-5">
+                                    <label class="control-label">Đơn vị*</label>
+                                    @Html.DropDownList("MaDonVi", (SelectList)ViewBag.DonVi, "- Chọn đơn vị -",
+                                    new { @class = "form-control", @required = "required" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class=" row">
+                            <div class="form-group">
+                                <div class="col-lg-1"></div>
+                                <div class="col-lg-5" id="4">
+                                    <label class="control-label">Loại dụng cụ*</label>
+                                    @Html.DropDownList("LoaiDungCu", (SelectList)ViewBag.DungCu, "- Chọn loại dụng cụ -", new { @class = "form-control" })
+                                </div>
+                                <div class="col-lg-5" id="5">
+                                    <label class="control-label">Loại hóa chất*</label>';
+                                    @Html.DropDownList("LoaiHoaChat", (SelectList)ViewBag.HoaChat, "- Chọn loại hóa chất -", new { @class = "form-control" })
+                                </div>
+                                <div class="col-lg-5">
+                                    <label class="control-label">Hãng Sản Xuất*</label>
+                                    @Html.DropDownList("MaHangSX", (SelectList)ViewBag.HangSanXuat, "- Chọn hãng sản xuất -",
+                                    new { @class = "form-control", @required = "required" })
+                                </div>
+                                <div class="col-lg-5" id="2">
+                                    <label class="control-label">Chất Liệu</label>
+                                    <input class="form-control text-box single-line" id="ChatLieu" maxlength="250" name="ChatLieu" type="text" value="" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group" id="1">
+                                <div class="col-lg-1"></div>
+                                <div class="col-lg-10">
+                                    <label class="control-label">Hàm Lượng</label>
+                                    <input class="form-control text-box single-line" data-val="true" data-val-length="The field HamLuong must be a string with a maximum length of 250." data-val-length-max="250" id="HamLuong" maxlength="250" name="HamLuong" type="text" value="" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-lg-1"></div>
+                                <div class="col-lg-5">
+                                    <label class="control-label">Giá Bán</label>
+                                    <input class="form-control text-box single-line" data-val="true" data-val-number="The field GiaBan must be a number." data-val-required="The GiaBan field is required." id="GiaBan" maxlength="250" name="GiaBan" type="text" value="" />
+                                </div>
+                                <div class="col-lg-5">
+                                    <label class="control-label">Xuất xứ</label>
+                                    <input class="form-control text-box single-line" data-val="true" data-val-length="The field NguonGoc must be a string with a maximum length of 250." data-val-length-max="250" id="NguonGoc" maxlength="250" name="NguonGoc" type="text" value="" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-1"></div>
+                            <div class="form-group col-lg-4">
+                                <label class="control-label">Năm sản xuất</label>
+                                <div class="input-group date" id="NamSX">
+                                    <input type="text" class="form-control" name="NamSX" id="NamSX" required />
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="form-group col-lg-3">
+                                <label class="control-label">Ngày Nhập</label>
+                                <div class="input-group date" id="NgayNhap">
+                                    <input type="text" class="form-control" name="NgayNhap" id="NgayNhap" />
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="form-group col-lg-3" id="6">
+                                <label class="control-label">Ngày hết hạn</label>
+                                <div class="input-group date" id="NgayHetHan">
+                                    <input type="text" class="form-control" name="NgayHetHan" id="NgayHetHan" />
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-lg-1"></div>
+                                <div class="col-lg-3" id="8">
+                                    <label class="control-label">Ngày bắt đầu bảo hành</label>
+                                    <div class="input-group date" id="NgayBatDauBaoHanh">
+                                        <input type="text" class="form-control" name="NgayBatDauBaoHanh" id="NgayBatDauBaoHanh" />
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3" id="9">
+                                    <label class="control-label">Ngày hết bảo hành</label>
+                                    <div class="input-group date" id="NgayKetThucBaoHanh">
+                                        <input type="text" class="form-control" name="NgayKetThucBaoHanh" id="NgayKetThucBaoHanh" />
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4" id="7">
+                                    <label class="control-label">Tình trạng</label>
+                                    @Html.DropDownList("TinhTrang", (SelectList)ViewBag.TinhTrang, "- Chọn tình trạng -", new { @class = "form-control" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group" id="3">
+                                <div class="col-lg-1"></div>
+                                <div class="col-lg-5">
+                                    <label class="control-label">Thành Phần</label>
+                                    <textarea class="form-control" cols="20" data-val="true" data-val-length="The field ThanhPhan must be a string with a maximum length of 250." data-val-length-max="250" id="ThanhPhan" name="ThanhPhan" rows="10"></textarea>
+                                </div>
+                                <div class="col-lg-5">
+                                    <label class="control-label">Công dụng</label>
+                                    <textarea class="form-control" cols="20" data-val="true" data-val-length="The field CongDung must be a string with a maximum length of 250." data-val-length-max="250" id="CongDung" name="CongDung" rows="10"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group ">
+                                <div class="col-lg-1"></div>
+                                <div class="col-lg-5">
+                                    <label class="control-label">Hướng dẫn sử dụng</label>
+                                    <textarea class="form-control" cols="20" id="HuongDanSuDung" name="HuongDanSuDung" rows="10">
+                                </textarea>
+                                </div>
+                                <div class="col-lg-5">
+                                    <label class="control-label">Mô tả</label>
+                                    <textarea class="form-control" cols="20" id="MoTa" name="MoTa" rows="10">
+                                </textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--Modal footer-->
+                    <div class="modal-footer">
+                        <a data-dismiss="modal" class="btn btn-default">Đóng</a>
+                        <a class="btn btn-success" onclick="Save">Lưu</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="data-modal-1" role="dialog" aria-labelledby="create" aria-hidden="true">
+        <div class="modal-dialog modal-lg" style="padding: 5% 0;">
+            <div class="modal-content">
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                <form id="modal-form-1" class="form-horizontal" method="post">
+                    <form id="modal-form" class="form-horizontal" method="post">
+                        <input type="hidden" name="Id" />
+                        <input type="hidden" name="MaPhieuNhap" value="" />
+                        <!--Modal header-->
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal"><i class="pci-cross pci-circle"></i></button>
+                            <h4 class="modal-title"></h4>
+                        </div>
+                        @if (ViewBag.IsEdit1)
+                        {
+                            <input type="hidden" value="true" name="IsEdit1" />
+                            <input type="hidden" value="@Phieu.Id" name="Id" />
+                        }
+                        else
+                        {
+                            <input type="hidden" value="false" name="IsEdit1" />
+                        }
+                        <!--Modal body-->
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="form-group">
+                                    <div class="col-lg-1"></div>
+                                    <div class="col-lg-6">
+                                        <label class="control-label">Tên vật tư*</label>
+                                        <input class="form-control text-box single-line" data-val="true" data-val-length="The field Ten must be a string with a maximum length of 250." data-val-length-max="250" id="Ten" maxlength="250" name="Ten" type="text" value="" />
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <label class="control-label">Danh mục*</label>
+                                        @Html.DropDownList("MaLoaiVatTu", (SelectList)ViewBag.Categories, "- Chọn vật tư -",
+                                        new { @class = "form-control", @required = "required" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group">
+                                    <div class="col-lg-1"></div>
+                                    <div class="col-lg-5">
+                                        <label class="control-label">Số lượng*</label>
+                                        <input class="form-control text-box single-line" data-val="true" data-val-number="The field SoLuong must be a number." data-val-required="The SoLuong field is required." id="SoLuong" maxlength="250" name="SoLuong" type="number" value="" />
+                                    </div>
+                                    <div class="col-lg-5">
+                                        <label class="control-label">Đơn vị*</label>
+                                        @Html.DropDownList("MaDonVi", (SelectList)ViewBag.DonVi, "- Chọn đơn vị -",
+                                        new { @class = "form-control", @required = "required" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class=" row">
+                                <div class="form-group">
+                                    <div class="col-lg-1"></div>
+                                    <div class="col-lg-5" id="four">
+                                        <label class="control-label">Loại dụng cụ*</label>
+                                        @Html.DropDownList("LoaiDungCu", (SelectList)ViewBag.DungCu, "- Chọn loại dụng cụ -", new { @class = "form-control" })
+                                    </div>
+                                    <div class="col-lg-5" id="five">
+                                        <label class="control-label">Loại hóa chất*</label>';
+                                        @Html.DropDownList("LoaiHoaChat", (SelectList)ViewBag.HoaChat, "- Chọn loại hóa chất -", new { @class = "form-control" })
+                                    </div>
+                                    <div class="col-lg-5">
+                                        <label class="control-label">Hãng Sản Xuất*</label>
+                                        @Html.DropDownList("MaHangSX", (SelectList)ViewBag.HangSanXuat, "- Chọn hãng sản xuất -",
+                                        new { @class = "form-control", @required = "required" })
+                                    </div>
+                                    <div class="col-lg-5" id="two">
+                                        <label class="control-label">Chất Liệu</label>
+                                        <input class="form-control text-box single-line" id="ChatLieu" maxlength="250" name="ChatLieu" type="text" value="" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group" id="one">
+                                    <div class="col-lg-1"></div>
+                                    <div class="col-lg-10">
+                                        <label class="control-label">Hàm Lượng</label>
+                                        <input class="form-control text-box single-line" data-val="true" data-val-length="The field HamLuong must be a string with a maximum length of 250." data-val-length-max="250" id="HamLuong" maxlength="250" name="HamLuong" type="text" value="" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group">
+                                    <div class="col-lg-1"></div>
+                                    <div class="col-lg-5">
+                                        <label class="control-label">Giá Bán</label>
+                                        <input class="form-control text-box single-line" data-val="true" data-val-number="The field GiaBan must be a number." data-val-required="The GiaBan field is required." id="GiaBan" maxlength="250" name="GiaBan" type="text" value="" />
+                                    </div>
+                                    <div class="col-lg-5">
+                                        <label class="control-label">Xuất xứ</label>
+                                        <input class="form-control text-box single-line" data-val="true" data-val-length="The field NguonGoc must be a string with a maximum length of 250." data-val-length-max="250" id="NguonGoc" maxlength="250" name="NguonGoc" type="text" value="" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-1"></div>
+                                <div class="form-group col-lg-4">
+                                    <label class="control-label">Năm sản xuất</label>
+                                    <div class="input-group date" id="NamSX">
+                                        <input type="text" class="form-control" name="NamSX" id="NamSX" required />
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="form-group col-lg-3">
+                                    <label class="control-label">Ngày Nhập</label>
+                                    <div class="input-group date" id="NgayNhap">
+                                        <input type="text" class="form-control" name="NgayNhap" id="NgayNhap" />
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="form-group col-lg-3" id="six">
+                                    <label class="control-label">Ngày hết hạn</label>
+                                    <div class="input-group date" id="NgayHetHan">
+                                        <input type="text" class="form-control" name="NgayHetHan" id="NgayHetHan" />
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group">
+                                    <div class="col-lg-1"></div>
+                                    <div class="col-lg-3" id="eight">
+                                        <label class="control-label">Ngày bắt đầu bảo hành</label>
+                                        <div class="input-group date" id="NgayBatDauBaoHanh">
+                                            <input type="text" class="form-control" name="NgayBatDauBaoHanh" id="NgayBatDauBaoHanh" />
+                                            <span class="input-group-addon">
+                                                <span class="glyphicon glyphicon-calendar"></span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3" id="nine">
+                                        <label class="control-label">Ngày hết bảo hành</label>
+                                        <div class="input-group date" id="NgayKetThucBaoHanh">
+                                            <input type="text" class="form-control" name="NgayKetThucBaoHanh" id="NgayKetThucBaoHanh" />
+                                            <span class="input-group-addon">
+                                                <span class="glyphicon glyphicon-calendar"></span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4" id="seven">
+                                        <label class="control-label">Tình trạng</label>
+                                        @Html.DropDownList("TinhTrang", (SelectList)ViewBag.TinhTrang, "- Chọn tình trạng -", new { @class = "form-control" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group" id="three">
+                                    <div class="col-lg-1"></div>
+                                    <div class="col-lg-5">
+                                        <label class="control-label">Thành Phần</label>
+                                        <textarea class="form-control" cols="20" data-val="true" data-val-length="The field ThanhPhan must be a string with a maximum length of 250." data-val-length-max="250" id="ThanhPhan" name="ThanhPhan" rows="10"></textarea>
+                                    </div>
+                                    <div class="col-lg-5">
+                                        <label class="control-label">Công dụng</label>
+                                        <textarea class="form-control" cols="20" data-val="true" data-val-length="The field CongDung must be a string with a maximum length of 250." data-val-length-max="250" id="CongDung" name="CongDung" rows="10"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group ">
+                                    <div class="col-lg-1"></div>
+                                    <div class="col-lg-5">
+                                        <label class="control-label">Hướng dẫn sử dụng</label>
+                                        <textarea class="form-control" cols="20" id="HuongDanSuDung" name="HuongDanSuDung" rows="10">
+                                </textarea>
+                                    </div>
+                                    <div class="col-lg-5">
+                                        <label class="control-label">Mô tả</label>
+                                        <textarea class="form-control" cols="20" id="MoTa" name="MoTa" rows="10">
+                                </textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!--Modal footer-->
+                        <div class="modal-footer">
+                            <a data-dismiss="modal" class="btn btn-default">Đóng</a>
+                            <a class="btn btn-success" onclick="">Lưu</a>
+                        </div>
+                    </form>
+            </div>
+        </div>
+    </div>
+    <!--Script-->
+    @section Scripts {
+        <script src="~/Areas/Admin/Content/plugins/moment/min/moment.min.js"></script>
+        <script src="~/Areas/Admin/Content/js/simple.money.format.js"></script>
+        <script src="~/Areas/Admin/Content/plugins/bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js"></script>
+        <script>
+    $(document).ready(function () {
+
+
+      const value = $("#MaLoaiVatTu").val();
+      $('#NgayNhap').datetimepicker();
+      $('#NgayHetHan').datetimepicker();
+      $('#NgayKetThucBaoHanh').datetimepicker();
+      $('#NgayBatDauBaoHanh').datetimepicker();
+      $('#NamSX').datetimepicker();
+
+@*          $('#NgayNhap').data("DateTimePicker").date('@ViewBag.NgayNhap');
+           $('#NamSX').data("DateTimePicker").date('@ViewBag.NamSX');
+
+           $('#NgayKetThucBaoHanh').data("DateTimePicker").date('@ViewBag.NgayKetThucBaoHanh');
+
+      $('#NgayBatDauBaoHanh').data("DateTimePicker").date('@ViewBag.NgayBatDauBaoHanh');
+
+
+          $('#NgayHetHan').data("DateTimePicker").date('@ViewBag.NgayHetHan');*@
+
+
+
+
+
+
+      if (value == "" || value == "1") {
+          $("#1").hide();
+          $("#2").show();
+          $("#3").hide();
+          $("#4").hide();
+          $("#5").hide();
+          $("#6").hide();
+          $("#7").hide();
+          $("#8").hide();
+          $("#9").hide();
+
+          $("#one").hide();
+          $("#two").show();
+          $("#three").hide();
+          $("#four").hide();
+          $("#five").hide();
+          $("#six").hide();
+          $("#seven").hide();
+          $("#eight").hide();
+          $("#nine").hide();
+
+
+
+
+
+      }
+
+
+      if (value == "2") {
+          $("#1").hide();
+          $("#2").hide();
+          $("#3").hide();
+          $("#4").show();
+          $("#5").hide();
+          $("#6").hide();
+          $("#7").show();
+          $("#8").show();
+          $("#9").show();
+
+          $("#one").hide();
+          $("#two").hide();
+          $("#three").hide();
+          $("#four").show();
+          $("#five").hide();
+          $("#six").hide();
+          $("#seven").show();
+          $("#eight").show();
+          $("#nine").show();
+
+
+
+      }
+      if (value == "3") {
+          $("#1").show();
+          $("#2").hide();
+          $("#3").show();
+          $("#4").hide();
+          $("#5").show();
+          $("#6").show();
+          $("#7").hide();
+          $("#8").hide();
+          $("#9").hide();
+
+          $("#one").show();
+          $("#two").hide();
+          $("#three").show();
+          $("#four").hide();
+          $("#five").show();
+          $("#six").show();
+          $("#seven").hide();
+          $("#eight").hide();
+          $("#nine").hide();
+
+
+
+
+      }
+    });
+
+
+            function Save() {
+                $("#modal-form").submit();
+            }
+
+      $("#MaLoaiVatTu").change(function () {
+          const value = $("#MaLoaiVatTu").val();
+          if (value == "" || value == "1") {
+              $("#1").hide();
+              $("#2").show();
+              $("#3").hide();
+              $("#4").hide();
+              $("#5").hide();
+              $("#6").hide();
+              $("#7").hide();
+              $("#8").hide();
+              $("#9").hide();
+
+              $("#one").hide();
+              $("#two").show();
+              $("#three").hide();
+              $("#four").hide();
+              $("#five").hide();
+              $("#six").hide();
+              $("#seven").hide();
+              $("#eight").hide();
+              $("#nine").hide();
+
+
+
+
+
+          }
+
+
+          if (value == "2") {
+              $("#1").hide();
+              $("#2").hide();
+              $("#3").hide();
+              $("#4").show();
+              $("#5").hide();
+              $("#6").hide();
+              $("#7").show();
+              $("#8").show();
+              $("#9").show();
+
+              $("#one").hide();
+              $("#two").hide();
+              $("#three").hide();
+              $("#four").show();
+              $("#five").hide();
+              $("#six").hide();
+              $("#seven").show();
+              $("#eight").show();
+              $("#nine").show();
+
+
+
+          }
+          if (value == "3") {
+              $("#1").show();
+              $("#2").hide();
+              $("#3").show();
+              $("#4").hide();
+              $("#5").show();
+              $("#6").show();
+              $("#7").hide();
+              $("#8").hide();
+              $("#9").hide();
+
+              $("#one").show();
+              $("#two").hide();
+              $("#three").show();
+              $("#four").hide();
+              $("#five").show();
+              $("#six").show();
+              $("#seven").hide();
+              $("#eight").hide();
+              $("#nine").hide();
+
+
+
+
+          }
+      });
+
+
+    $("#MaHangSX").change(function () {
+      ajax.get(`/admin/HangSanXuat/GetJson`, { id: this.value },
+          (response) => {
+              if (response.status) {
+                  var obj = response.data;
+                  $('#NguonGoc').val(obj.Country);
+                  $('#NguonGoc').attr("readonly","true");
+
+
+              } else {
+                  notify.push(response.mess, notify.EType.DANGER);
+              }
+          },
+          (jqXHR, textStatus) => {
+              let mess = "Request failed: " + textStatus;
+              notify.push(mess, notify.EType.DANGER);
+
+          }
+      );
+
+    }
+    )
+
+            $("#MaVatTu").change(function () {
+                ajax.get(`/admin/VatTuYTe/GetJson`, { id: this.value },
+                    (response) => {
+                        if (response.status) {
+                            var obj = response.data;
+                            $('#NguonGoc').val(obj.Country);
+                            $('#Id').val(obj.Id);
+                            $('#Ten').val(obj.Ten);
+                            $('#MaLoaiVatTu').val(obj.MaLoaiVatTu);
+                            $('#MaLoaiVatTu').select2().trigger('change');
+
+                            $('#MaHangSX').val(obj.MaHangSX);
+                            $('#MaHangSX').select2().trigger('change');
+                            $('#HuongDanSuDung').val(obj.HuongDanSuDung);
+                           
+                            $('#NgayHetHan').data("DateTimePicker").date(obj.NgayHetHans);
+
+                            $('#MaDonVi').val(obj.MaDonVi);
+                            $('#MaDonVi').select2().trigger('change');
+                            $('#MoTa').val(obj.MoTa);
+                            $('#ThanhPhan').val(obj.ThanhPhan);
+                            $('#HamLuong').val(obj.HamLuong);
+                            $('#GiaBan').val(obj.GiaBan);
+                       
+                            $('#NgayNhap').data("DateTimePicker").date(obj.NgayNhaps);
+
+                            $('#CongDung').val(obj.CongDung);
+                            $('#ChatLieu').val(obj.ChatLieu);
+                            $('#LoaiDungCu').val(obj.LoaiDungCu);
+                            $('#LoaiHoaChat').val(obj.LoaiHoaChat);
+                            $('#TinhTrang').val(obj.TinhTrang);
+                     
+                            $('#NgayBatDauBaoHanh').data("DateTimePicker").date(obj.NgayBatDauBaoHanhs);
+
+                            $('#NgayKetThucBaoHanh').data("DateTimePicker").date(obj.NgayKetThucBaoHanhs);
+                            $('#NamSX').data("DateTimePicker").date(obj.NamSXs);
+                          
+
+
+
+                        } else {
+                            notify.push(response.mess, notify.EType.DANGER);
+                        }
+                    },
+                    (jqXHR, textStatus) => {
+                        let mess = "Request failed: " + textStatus;
+                        notify.push(mess, notify.EType.DANGER);
+
+                    }
+                );
+
+            }
+            )
+
+
+    const baseUrl = "/admin/record";
+    // Valid
+    const fields = {
+      DiseaseName: {
+          container: 'tooltip',
+          validators: {
+              notEmpty: {
+                  message: 'Tên không được để trống!'
+              }
+          }
+      }
+
+    }
+
+    @*    validator.valid('modal-form',
+      fields,
+      (e) => {
+          e.preventDefault();
+
+          var formData = new FormData(document.getElementById('modal-form'));
+          const isChecked = $("#demo-allow-comments").is(":checked");
+          formData.set("Status", isChecked);
+          ajax.createOrUpdate(`${baseUrl}/CreateOrEdit`,
+              formData,
+              (response) => {
+                  if (response.status) {
+                      notify.push(response.mess, notify.EType.SUCCESS);
+                      notify.loading();
+                      $('#data-modal').modal('hide');
+
+                      const type = $('#type').val();
+                      switch (type) {
+                      case 1: //file
+                          window.location.href = `/admin/Attachment?detailMaPhieuNhap=${response.data.detailMaPhieuNhap}`;
+                          break;
+                      case 2: //medical
+                          window.location.href = `/admin/Prescription?detailMaPhieuNhap=${response.data.detailMaPhieuNhap}`;
+                          break;
+                      case 0:
+                          window.location.reload();
+                          break;
+                      default:
+                          window.location.reload();
+                      }
+
+                  } else {
+                      notify.push(response.mess, notify.EType.DANGER);
+                      $(':input[type="submit"]').prop("disabled", false);
+                  }
+              },
+              (jqXhr, textStatus) => {
+                  const mess = `Request failed: ${textStatus}`;
+                  notify.push(mess, notify.EType.DANGER);
+                  $(':input[type="submit"]').prop("disabled", false);
+              }
+          );
+      });*@
+
+
+
+        //create phieu vat nhap tu chi tiet
+        validator.valid('modal-form',
+            fields,
+            (e) => {
+                e.preventDefault();
+
+                var formData = new FormData(document.getElementById('modal-form'));
+
+                ajax.createOrUpdate(`${baseUrl}/CreateOrEdit1`,
+                    formData,
+                    (response) => {
+                        if (response.status) {
+                            notify.push(response.mess, notify.EType.SUCCESS);
+                            notify.loading();
+                            $('#data-modal').modal('hide');
+
+
+
+
+                            window.location.reload();
+
+
+                    } else {
+                    notify.push(response.mess, notify.EType.DANGER);
+                    $(':input[type="submit"]').prop("disabled", false);
+                }
+              },
+            (jqXhr, textStatus) => {
+                const mess = `Request failed: ${textStatus}`;
+                notify.push(mess, notify.EType.DANGER);
+                $(':input[type="submit"]').prop("disabled", false);
+            }
+        );
+      });
+
+    //Edit
+    function openModal(isEdit1, id) {
+      $('#modal-form')[0].reset();
+      if (!isEdit1) {
+          $('#modal-form input[name="isEdit1"]').val(false);
+          $('#modal-form input[name="Id"]').val("");
+          $('#data-modal').modal('show');
+
+          return;
+      }
+      $(".edit-modal").show();
+      ajax.get(`${baseUrl}/GetJson`,
+          { id: id },
+          (response) => {
+              if (response.status) {
+                  const obj = response.data;
+                  $('#modal-form input[name="Process"]').val(obj.Process);
+                  $('#modal-form textarea[name="Note"]').val(obj.Note);
+                  $('#modal-form textarea[name="Result"]').val(obj.Result);
+                  $('#modal-form input[name="DiseaseName"]').val(obj.DiseaseName);
+                  $("#FacultyId").val(obj.FacultyId);
+                  $('#FacultyId').select2().trigger('change');
+                  $("#DetailDoctorId").val(obj.DoctorId);
+                  $('#DetailDoctorId').select2().trigger('change');
+                  $('#modal-form input[name="Status"]').prop('checked', obj.Status);
+                  if (obj.Status) {
+                      $("#status").text("Đã thăm khám");
+                  } else {
+                      $("#status").text("Chờ thăm khám");
+                  }
+
+                  $('#modal-form input[name="Id"]').val(obj.Id);
+                  $('#modal-form input[name="isEdit1"]').val(true);
+                  $('#data-modal').modal('show');
+              } else {
+                  notify.push(response.mess, notify.EType.DANGER);
+              }
+          },
+          (jqXhr, textStatus) => {
+              const mess = `Request failed: ${textStatus}`;
+              notify.push(mess, notify.EType.DANGER);
+          }
+      );
+    }
+
+
+
+
+
+
+
+
+    function openModal1(isEdit1, id) {
+      $('#modal-form-1')[0].reset();
+      if (!isEdit1) {
+          $('#modal-form-1 input[name="isEdit1"]').val(false);
+          $('#modal-form-1 input[name="Id"]').val("");
+          $('#data-modal-1').modal('show');
+
+          return;
+      }
+      $(".edit-modal-1").show();
+      ajax.get(`${baseUrl}/GetJson`,
+          { id: id },
+          (response) => {
+              if (response.status) {
+                  const obj = response.data;
+                  $('#modal-form input[name="Process"]').val(obj.Process);
+                  $('#modal-form textarea[name="Note"]').val(obj.Note);
+                  $('#modal-form textarea[name="Result"]').val(obj.Result);
+                  $('#modal-form input[name="DiseaseName"]').val(obj.DiseaseName);
+                  $("#FacultyId").val(obj.FacultyId);
+                  $('#FacultyId').select2().trigger('change');
+                  $("#DetailDoctorId").val(obj.DoctorId);
+                  $('#DetailDoctorId').select2().trigger('change');
+                  $('#modal-form input[name="Status"]').prop('checked', obj.Status);
+                  if (obj.Status) {
+                      $("#status").text("Đã thăm khám");
+                  } else {
+                      $("#status").text("Chờ thăm khám");
+                  }
+
+                  $('#modal-form input[name="Id"]').val(obj.Id);
+                  $('#modal-form input[name="isEdit1"]').val(true);
+                  $('#data-modal1').modal('show');
+              } else {
+                  notify.push(response.mess, notify.EType.DANGER);
+              }
+          },
+          (jqXhr, textStatus) => {
+              const mess = `Request failed: ${textStatus}`;
+              notify.push(mess, notify.EType.DANGER);
+          }
+      );
+    }
+
+
+    //Del
+    @* function deleteElement(_id, name) {
+      var mess = `Xác nhận <b>xóa</b> bản ghi <b>${name}</b>`;
+      bootbox.confirm(mess,
+          function(result) {
+              if (result) {
+                  ajax.del(`${baseUrl}/delete`,
+                      { id: _id },
+                      (response) => {
+                          if (response.status) {
+                              notify.push(response.mess, notify.EType.SUCCESS);
+                              $(`#row_${_id}`).remove();
+                          } else {
+                              notify.push(mess, notify.EType.DANGER);
+                          }
+                      },
+                      (jqXhr, textStatus) => {
+                          const mess = `Request failed: ${textStatus}`;
+                          notify.push(mess, notify.EType.DANGER);
+
+                      }
+                  );
+              }
+          });*@
+
+        </script>
+    }
